@@ -4,7 +4,7 @@ class Agent extends VectorSprite {
     ALIGNMNET_FORCE = 0.01;
     COHESION_FORCE = 0.0001;
     BOUNDARY_FORCE = 0.1;
-    THURST_FORCE = 0.1;
+    THURST_FORCE = 10;
 
     constructor(x, y) {
         super(x, y);
@@ -12,8 +12,9 @@ class Agent extends VectorSprite {
         this.vel = Vector.randomUnit().scalarMult(5);
         this.acc = new Vector();
         this.maxSpeed = 3;
-        this.desiredSeparation = 50;
-        this.desiredBoundaryDist = 100;
+        this.desiredSeparation = 75;
+        this.desiredBoundaryDist = 150;
+        this.detectionRadius = 200;
         this.detectedAgents = [];
     }
 
