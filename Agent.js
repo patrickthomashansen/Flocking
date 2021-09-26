@@ -1,41 +1,46 @@
 class Agent extends VectorSprite {
 
-    SEPARATION_FORCE = 10;
-    ALIGNMNET_FORCE = 0.01;
-    COHESION_FORCE = 0.0001;
-    BOUNDARY_FORCE = 0.1;
-    THURST_FORCE = 10;
+    SEPARATION_FORCE = 200;
+    ALIGNMNET_FORCE = 0.025;
+    COHESION_FORCE = 0.005;
+    BOUNDARY_FORCE = 0.5;
+    SUPER_BOUNDARY_FORCE = 1;
+    THRUST_FORCE = 0.1;
 
     constructor(x, y) {
         super(x, y);
-        // this.vel = new Vector();
         this.vel = Vector.randomUnit().scalarMult(5);
         this.acc = new Vector();
-        this.maxSpeed = 3;
+        this.maxSpeed = 5;
         this.desiredSeparation = 75;
-        this.desiredBoundaryDist = 150;
-        this.detectionRadius = 200;
+        this.desiredBoundaryDist = 250;
+        this.detectionRadius = 100;
         this.detectedAgents = [];
     }
 
-    detect(agents) {
-        this.detectedAgents = []
+    detect(agents, group) {
         for (let i = 0; i < agents.length; i++) {
             let d = Vector.copy(this.pos).distSq(agents[i].pos);
             if ((agents[i] != this) && (d < this.detectionRadius * this.detectionRadius)) {
                 let diff = Vector.copy(agents[i].pos).sub(this.pos);
                 let angle = this.vel.angle(diff);
                 if (Math.abs(angle) < this.detectionAngle) {
-                    this.detectedAgents.push(agents[i]);
+                    group.push(agents[i]);
                 }
             }
         }
-        
+        return group;
+    }
+    
+    detectAgents(agents) {
+        this.detectedAgents = [];
+        this.detect(agents, this.detectedAgents);
     }
 
     applySeparation() {
         let sum = new Vector();
         let count = 0;
+        // console.log(this.detectedAgents.length)
         for (let i = 0; i < this.detectedAgents.length; i++) {
             let d = Vector.copy(this.pos).distSq(this.detectedAgents[i].pos);
             if ((d > 0) && (d < this.desiredSeparation * this.desiredSeparation)) {
@@ -47,6 +52,7 @@ class Agent extends VectorSprite {
             }
         }
         if (count > 0) {
+            // console.log(sum)
             sum.scalarDiv(count);
             sum.scalarMult(this.SEPARATION_FORCE);
             this.acc.add(sum);
@@ -58,7 +64,7 @@ class Agent extends VectorSprite {
         for (let i = 0; i < this.detectedAgents.length; i++) {
             sum.add(this.detectedAgents[i].vel);
         }
-        if (sum.mag() > 0) {
+        if (sum.magSq() > 0) {
             sum.scalarDiv(this.detectedAgents.length);
             sum.scalarMult(this.ALIGNMNET_FORCE);
             this.acc.add(sum);
@@ -70,11 +76,11 @@ class Agent extends VectorSprite {
         for (let i = 0; i < this.detectedAgents.length; i++) {
             sum.add(this.detectedAgents[i].pos);
         }
-        if (sum.mag() > 0) {
+        if (sum.magSq() > 0) {
             sum.scalarDiv(this.detectedAgents.length);
-            let diff = Vector.copy(this.pos).sub(sum);
-            diff.scalarMult(this.COHESION_FORCE);
-            this.acc.sub(diff);
+            sum.sub(this.pos);
+            sum.scalarMult(this.COHESION_FORCE);
+            this.acc.add(sum);
         }
     }
 
@@ -92,22 +98,40 @@ class Agent extends VectorSprite {
         else if (this.pos.y > height - this.desiredBoundaryDist) {
             force.add(new Vector(this.vel.x, -this.maxSpeed));
         }
-        if (force.mag() > 0) {
+        if (force.magSq() > 0) {
             force.setMag(this.maxSpeed);
             force.sub(this.vel);
-            force.limitMag(this.BOUNDARY_FORCE);
+            if (this.pos.x < 0 || this.pos.x > width || this.pos.y < 0 || this.pos.y > height) {
+                force.limitMag(this.SUPER_BOUNDARY_FORCE);
+            }
+            else {
+                force.limitMag(this.BOUNDARY_FORCE);
+            }
             this.acc.add(force);
         }
     }
 
     applyThrust() {
-        let dir = Vector.copy(this.vel).normalize();
-        this.acc.add(dir.scalarMult(this.THRUST_FORCE));
+        if (this.vel.magSq() > 0) {
+            this.acc.add(Vector.copy(this.vel).setMag(this.THRUST_FORCE));
+        }
     }
 
     update() {
+        this.prevPosCount++;
+        if (this.prevPosCount >= this.PREV_POS_EVERY_N){
+            this.prevPosCount = 0;
+            if (this.prevPos.length >= this.MAX_PREV_POS){
+                this.prevPos.pop();
+            }
+            this.prevPos.unshift(Vector.copy(this.pos));
+        }
+
+        // console.log(this.vel)
         this.vel.add(this.acc);
-        this.vel.limitMag(this.maxSpeed);
+        if (this.vel.magSq() > 0) {
+            this.vel.limitMag(this.maxSpeed);
+        }
         this.pos.add(this.vel);
         this.angle = this.vel.toAngle();
         this.acc.scalarMult(0);

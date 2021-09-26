@@ -85,10 +85,20 @@ class Vector {
     }
     
     toAngle() {
-        return -Math.atan2(-this.y, this.x);
+        if (this.magSq() > 0) {
+            return -Math.atan2(-this.y, this.x);
+        }
+        else {
+            return 0;
+        }
     }
 
     angle(v) {
-        return Math.acos(((this.x * v.x) + (this.y * v.y)) / this.mag() / v.mag());
+        if (this.magSq() > 0 && v.magSq() > 0) {
+            return Math.acos(((this.x * v.x) + (this.y * v.y)) / this.mag() / v.mag());
+        }
+        else {
+            return 0;
+        }
     }
 }

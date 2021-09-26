@@ -1,18 +1,26 @@
 var canvas;
 var ctx;
-var allAgents = [];
+var preyAgents = [];
+var predAgents = [];
 
-var NUM_AGENTS = 1000;
+var NUM_PREY = 1000;
+var NUM_PRED = 5;
 
 function init() {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
     updateCanvasSize();
     
-    for (let i = 0; i < NUM_AGENTS; i++) {
+    for (let i = 0; i < NUM_PREY; i++) {
         let x = Math.random() * canvas.width; 
         let y = Math.random() * canvas.height;
-        allAgents.push(new Agent(x, y));
+        preyAgents.push(new Prey(x, y));
+    }
+
+    for (let i = 0; i < NUM_PRED; i++) {
+        let x = Math.random() * canvas.width; 
+        let y = Math.random() * canvas.height;
+        predAgents.push(new Predator(x, y));
     }
     
 }
@@ -20,15 +28,34 @@ function init() {
 function draw() {
     updateCanvasSize();
 
-    for (let i = 0; i < allAgents.length; i++) {
-        allAgents[i].detect(allAgents);
-        allAgents[i].applySeparation();
-        allAgents[i].applyAlignment();
-        allAgents[i].applyCohesion();
-        allAgents[i].applyBoundaries(canvas.width, canvas.height);
-        allAgents[i].update();
-        // allAgents[i].renderDetectionBounds(ctx);
-        allAgents[i].render(ctx);
+    for (let i = 0; i < preyAgents.length; i++) {
+        preyAgents[i].detectAgents(preyAgents);
+        preyAgents[i].detectPredators(predAgents);
+        preyAgents[i].applyThrust();
+        preyAgents[i].applySeparation();
+        preyAgents[i].applyAlignment();
+        preyAgents[i].applyCohesion();
+        preyAgents[i].applyFlee();
+        preyAgents[i].applyBoundaries(canvas.width, canvas.height);
+        preyAgents[i].update();
+        // preyAgents[i].renderTail(ctx);
+        // preyAgents[i].renderDetectionBounds(ctx);
+        preyAgents[i].render(ctx);
+    }
+
+    for (let i = 0; i < predAgents.length; i++) {
+        predAgents[i].detectAgents(predAgents);
+        predAgents[i].detectPrey(preyAgents);
+        predAgents[i].applyThrust();
+        predAgents[i].applySeparation();
+        // predAgents[i].applyAlignment();
+        // predAgents[i].applyCohesion();
+        predAgents[i].applyAttack();
+        predAgents[i].applyBoundaries(canvas.width, canvas.height);
+        predAgents[i].update();
+        predAgents[i].renderTail(ctx);
+        // predAgents[i].renderDetectionBounds(ctx);
+        predAgents[i].render(ctx);
     }
     
 }
@@ -43,4 +70,4 @@ function updateCanvasSize() {
 }
 
 init();
-setInterval(draw, 20);
+setInterval(draw, 2);
