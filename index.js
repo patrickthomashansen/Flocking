@@ -3,8 +3,8 @@ var ctx;
 var preyAgents = [];
 var predAgents = [];
 
-var NUM_PREY = 1000;
-var NUM_PRED = 5;
+var NUM_PREY = 200;
+var NUM_PRED = 2;
 
 function init() {
     canvas = document.getElementById('canvas');
@@ -38,7 +38,7 @@ function draw() {
         preyAgents[i].applyFlee();
         preyAgents[i].applyBoundaries(canvas.width, canvas.height);
         preyAgents[i].update();
-        // preyAgents[i].renderTail(ctx);
+        preyAgents[i].renderTail(ctx);
         // preyAgents[i].renderDetectionBounds(ctx);
         preyAgents[i].render(ctx);
     }
@@ -70,4 +70,4 @@ function updateCanvasSize() {
 }
 
 init();
-setInterval(draw, 2);
+setInterval(draw, 20);
