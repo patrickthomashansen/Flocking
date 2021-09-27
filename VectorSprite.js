@@ -5,14 +5,51 @@ class VectorSprite {
 
     constructor(x, y) {
         this.pos = new Vector(x, y);
-        this.size = 10;
-        this.angle = 0;
-        this.color = [255, 255, 255];
-        this.alpha = 1;
-        this.detectionRadius = 100;
-        this.detectionAngle = Math.PI * 2 /3;
+
         this.prevPos = [];
         this.prevPosCount = 0;
+        
+        this.setColor([255, 255, 255]);
+        this.setAlpha(1);
+        this.setSize(10);
+        this.setAngle(0);
+        this.setDetectionRadius(100);
+        this.setDetectionAngle(Math.PI * 2 / 3);
+    }
+
+    setColor(color) {
+        this.color = color;
+    }
+
+    setAlpha(alpha) {
+        this.alpha = alpha;
+    }
+
+    setSize(size) {
+        this.size = size;
+    }
+
+    setAngle(angle) {
+        this.angle = angle;
+    }
+
+    setDetectionRadius(radius) {
+        this.detectionRadius = radius;
+    }
+
+    setDetectionAngle(angle) {
+        this.detectionAngle = angle;
+    }
+
+    updatePrevPos(pos) {
+        this.prevPosCount++;
+        if (this.prevPosCount >= this.PREV_POS_EVERY_N){
+            this.prevPosCount = 0;
+            if (this.prevPos.length >= this.MAX_PREV_POS){
+                this.prevPos.pop();
+            }
+            this.prevPos.unshift(Vector.copy(this.pos));
+        }
     }
 
     render(ctx) {

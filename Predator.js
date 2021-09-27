@@ -14,26 +14,15 @@ class Predator extends Agent {
         this.detectedPrey = [];
     }
 
-    detectPrey(agents) {
-        this.detectedPrey = [];
-        this.detect(agents, this.detectedPrey);
-    }
-
-    applyAttack(agents) {
-        let closestDiff = new Vector();
-        let closestDiffMagSq = 1000000;
-        for (let i = 0; i < this.detectedPrey.length; i++) {
-            let diff = Vector.copy(this.detectedPrey[i].pos).sub(this.pos);
-            let diffMagSq = diff.magSq();
-            if (diffMagSq < closestDiffMagSq) {
-                closestDiff = diff;
-                closestDiffMagSq = diffMagSq;
-            }
-        }
-        if (closestDiff.magSq() > 0) {
-            closestDiff.normalize();
-            closestDiff.scalarMult(this.ATTACK_FORCE);
-            this.acc.add(closestDiff);
-        }
-    }
+    update(agents, canvas, ctx) {
+        this.detectAgents(agents);
+        this.applyThrust();
+        this.applySeparation(PREDATOR, this.SEPARATION_FORCE);
+        this.applyAttack(PREY, this.ATTACK_FORCE);
+        this.applyBoundaries(canvas.width, canvas.height);
+        this.updatePos();
+        this.renderTail(ctx);
+        // this.renderDetectionBounds(ctx);
+        this.render(ctx);
+    } 
 }

@@ -11,21 +11,17 @@ class Prey extends Agent {
         this.detectedPredators = [];
     }
 
-    detectPredators(agents) {
-        this.detectedPredators = [];
-        this.detect(agents, this.detectedPredators);
-    }
-
-    applyFlee(agents) {
-        let sum = new Vector();
-        for (let i = 0; i < this.detectedPredators.length; i++) {
-            sum.add(this.detectedPredators[i].pos);
-        }
-        if (sum.magSq() > 0) {
-            sum.scalarDiv(this.detectedPredators.length);
-            sum.sub(this.pos);
-            sum.scalarMult(this.FLEE_FORCE);
-            this.acc.sub(sum);
-        }
-    }
+    update(agents, canvas, ctx) {
+        this.detectAgents(agents);
+        this.applyThrust();
+        this.applySeparation(PREY, this.SEPARATION_FORCE);
+        this.applyAlignment(PREY, this.ALIGNMENT_FORCE);
+        this.applyCohesion(PREY, this.COHESION_FORCE);
+        this.applyFlee(PREDATOR, this.FLEE_FORCE);
+        this.applyBoundaries(canvas.width, canvas.height);
+        this.updatePos();
+        // this.renderTail(ctx);
+        // this.renderDetectionBounds(ctx);
+        this.render(ctx);
+    } 
 }

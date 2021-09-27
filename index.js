@@ -1,63 +1,25 @@
 var canvas;
 var ctx;
-var preyAgents = [];
-var predAgents = [];
+let flock;
 
-var NUM_PREY = 200;
-var NUM_PRED = 2;
+var PREDATOR = "Predator";
+var PREY = "Prey";
 
 function init() {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
     updateCanvasSize();
-    
-    for (let i = 0; i < NUM_PREY; i++) {
-        let x = Math.random() * canvas.width; 
-        let y = Math.random() * canvas.height;
-        preyAgents.push(new Prey(x, y));
-    }
 
-    for (let i = 0; i < NUM_PRED; i++) {
-        let x = Math.random() * canvas.width; 
-        let y = Math.random() * canvas.height;
-        predAgents.push(new Predator(x, y));
-    }
-    
+    flock = new Flock();
+    flock.initializePopulations({
+        [PREDATOR]: 2,
+        [PREY]: 1000
+    })
 }
 
 function draw() {
     updateCanvasSize();
-
-    for (let i = 0; i < preyAgents.length; i++) {
-        preyAgents[i].detectAgents(preyAgents);
-        preyAgents[i].detectPredators(predAgents);
-        preyAgents[i].applyThrust();
-        preyAgents[i].applySeparation();
-        preyAgents[i].applyAlignment();
-        preyAgents[i].applyCohesion();
-        preyAgents[i].applyFlee();
-        preyAgents[i].applyBoundaries(canvas.width, canvas.height);
-        preyAgents[i].update();
-        preyAgents[i].renderTail(ctx);
-        // preyAgents[i].renderDetectionBounds(ctx);
-        preyAgents[i].render(ctx);
-    }
-
-    for (let i = 0; i < predAgents.length; i++) {
-        predAgents[i].detectAgents(predAgents);
-        predAgents[i].detectPrey(preyAgents);
-        predAgents[i].applyThrust();
-        predAgents[i].applySeparation();
-        // predAgents[i].applyAlignment();
-        // predAgents[i].applyCohesion();
-        predAgents[i].applyAttack();
-        predAgents[i].applyBoundaries(canvas.width, canvas.height);
-        predAgents[i].update();
-        predAgents[i].renderTail(ctx);
-        // predAgents[i].renderDetectionBounds(ctx);
-        predAgents[i].render(ctx);
-    }
-    
+    flock.update(canvas, ctx);
 }
 
 function updateCanvasSize() {
