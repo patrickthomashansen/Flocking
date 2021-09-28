@@ -6,7 +6,7 @@ class Predator extends Agent {
         this.size = 20;
         this.maxSpeed = 4;
         this.desiredSeparation = 100;
-        this.detectionRadius = 400;
+        this.detectionRadius = 200;
         this.detectionAngle = Math.PI / 2;
         this.detectedPrey = [];
     }

@@ -92,15 +92,30 @@ class Flock {
         }
     }
 
+    buildQuadtree() {
+        this.quadtree = new Quadtree(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < this.agents.length; i++) {
+            this.quadtree.insert(this.agents[i]);
+        }
+        for (let i = 0; i < this.food.length; i++) {
+            this.quadtree.insert(this.food[i]);
+        }
+    }
+
+    clearQuadtree() {
+        this.quadtree.clear();
+    }
+
     update(canvas) {
         for (let i = 0; i < this.agents.length; i++) {
             this.agents[i].move(canvas);
         }
+        this.buildQuadtree();
         for (let i = 0; i < this.agents.length; i++) {
             this.agents[i].resetDetections();
-            this.agents[i].detectAgents(this.agents);
-            this.agents[i].detectAgents(this.food);
+            this.agents[i].detectAgents(this.quadtree);
         }
+        this.clearQuadtree();
         for (let i = 0; i < this.agents.length; i++) {
             this.agents[i].interact();
         }

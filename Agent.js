@@ -30,7 +30,13 @@ class Agent extends VectorSprite {
         this.collidedAgents = {}
     }
 
-    detectAgents(agents) {
+    detectAgents(quadtree) {
+        let agents = quadtree.retrieveCollision(
+            this.pos.x-this.detectionRadius,
+            this.pos.y-this.detectionRadius,
+            2*this.detectionRadius,
+            2*this.detectionRadius
+        );
         for (let i = 0; i < agents.length; i++) {
             let d = Vector.copy(this.pos).distSq(agents[i].pos);
             if ((agents[i] != this) && (d < this.detectionRadius * this.detectionRadius)) {

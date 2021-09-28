@@ -21,7 +21,7 @@ function init() {
 
     flock = new Flock();
     flock.initializeAgentPopulations({[PREDATOR]: 100, [PREY]: 400});
-    flock.initializeFoodPopulations({[FOOD]: 100});
+    flock.initializeFoodPopulations({[FOOD]: 500});
     flock.registerFoodSpawns({[FOOD]: 1});
 
 }
@@ -63,4 +63,4 @@ function writeStats(data) {
   }
 
 init();
-setInterval(draw, 1);
+setInterval(draw, 20);
