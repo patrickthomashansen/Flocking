@@ -1,32 +1,51 @@
 class Agent extends VectorSprite {
 
-    SEPARATION_FORCE = 200;
-    ALIGNMENT_FORCE = 0.025;
-    COHESION_FORCE = 0.005;
     BOUNDARY_FORCE = 0.25;
     SUPER_BOUNDARY_FORCE = 1;
     THRUST_FORCE = 0.1;
 
+    EAT_DELAY = 100;
+    MATE_DELAY = 1000;
+
     constructor(x, y) {
         super(x, y);
-        this.vel = Vector.randomUnit().scalarMult(5);
+        // this.vel = Vector.randomUnit().scalarMult(5);
+        this.vel = new Vector();
         this.acc = new Vector();
         this.maxSpeed = 5;
         this.desiredSeparation = 75;
         this.desiredBoundaryDist = 100;
         this.detectionRadius = 100;
+        this.collisionRadius = 10;
         this.detectedAgents = {};
+        this.dead = false;
+        this.eatTimer = 0;
+        this.health = 1;
+        this.mating = false;
+        this.mateTimer = 0;
+    }
+
+    resetDetections() {
+        this.detectedAgents = {}
+        this.collidedAgents = {}
     }
 
     detectAgents(agents) {
-        this.detectedAgents = {}
         for (let i = 0; i < agents.length; i++) {
             let d = Vector.copy(this.pos).distSq(agents[i].pos);
             if ((agents[i] != this) && (d < this.detectionRadius * this.detectionRadius)) {
+                let agentType = agents[i].constructor.name;
+                // Check collision
+                if (d < this.collisionRadius * this.collisionRadius) {
+                    if (!this.collidedAgents[agentType]) {
+                        this.collidedAgents[agentType] = []
+                    }
+                    this.collidedAgents[agentType].push(agents[i]);
+                }
+                // Check detection
                 let diff = Vector.copy(agents[i].pos).sub(this.pos);
                 let angle = this.vel.angle(diff);
                 if (Math.abs(angle) < this.detectionAngle) {
-                    let agentType = agents[i].constructor.name;
                     if (!this.detectedAgents[agentType]) {
                         this.detectedAgents[agentType] = []
                     }
@@ -170,5 +189,50 @@ class Agent extends VectorSprite {
         this.pos.add(this.vel);
         this.angle = this.vel.toAngle();
         this.acc.scalarMult(0);
+    }
+
+    kill() {
+        this.dead = true;
+    }
+
+    isDead() {
+        return this.dead;
+    }
+
+    attemptEat(agentType) {
+        if (this.eatTimer < this.EAT_DELAY) {
+            this.eatTimer++;
+            return;
+        }
+        if (this.collidedAgents[agentType]) {
+            this.collidedAgents[agentType][0].kill();
+            this.eatTimer = 0;
+            this.health = 1;
+        }
+    }
+
+    age(damage) {
+        this.health -= damage;
+        this.setAlpha(this.health);
+        if (this.health < 0) {
+            this.kill();
+        }
+    }
+
+    attemptMate(agentType) {
+        if (this.mateTimer < this.MATE_DELAY) {
+            this.mateTimer++;
+            return;
+        }
+        if (this.collidedAgents[agentType] && this.health > 0.75) {
+            this.mating = true;
+            this.mateTimer = 0;
+        }
+    }
+    
+    breed() {
+        let r = this.mating;
+        this.mating = false;
+        return r;
     }
 }

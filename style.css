@@ -8,3 +8,11 @@ canvas {
   margin: 0;
   padding: 0;
 }
+
+#stats {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  font: 13px Arial;
+  color: white;
+}

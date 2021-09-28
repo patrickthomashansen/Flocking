@@ -1,13 +1,13 @@
 class VectorSprite {
 
     MAX_PREV_POS = 25;
-    PREV_POS_EVERY_N = 5;
+    PREV_POS_DELAY = 5;
 
     constructor(x, y) {
         this.pos = new Vector(x, y);
 
         this.prevPos = [];
-        this.prevPosCount = 0;
+        this.prevPosTimer = 0;
         
         this.setColor([255, 255, 255]);
         this.setAlpha(1);
@@ -42,9 +42,9 @@ class VectorSprite {
     }
 
     updatePrevPos(pos) {
-        this.prevPosCount++;
-        if (this.prevPosCount >= this.PREV_POS_EVERY_N){
-            this.prevPosCount = 0;
+        this.prevPosTimer++;
+        if (this.prevPosTimer >= this.PREV_POS_DELAY){
+            this.prevPosTimer = 0;
             if (this.prevPos.length >= this.MAX_PREV_POS){
                 this.prevPos.pop();
             }
