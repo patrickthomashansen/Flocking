@@ -1,5 +1,5 @@
 MAX_AGENT_POPULATION = 500;
-MAX_FOOD_POPULATION = 200;
+MAX_FOOD_POPULATION = 500;
 
 var stats;
 var canvas;
@@ -20,7 +20,7 @@ function init() {
     updateCanvasSize();
 
     flock = new Flock();
-    flock.initializeAgentPopulations({[PREDATOR]: 50, [PREY]: 200});
+    flock.initializeAgentPopulations({[PREDATOR]: 100, [PREY]: 400});
     flock.initializeFoodPopulations({[FOOD]: 100});
     flock.registerFoodSpawns({[FOOD]: 1});
 

@@ -2,7 +2,6 @@ class Food {
 
     constructor(x, y) {
         this.pos = new Vector(x, y);
-        this.type = FOOD;
         this.color = [255, 255, 255];
         this.size = 2;
         this.dead = false

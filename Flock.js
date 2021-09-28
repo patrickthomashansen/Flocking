@@ -10,8 +10,8 @@ class Flock {
         this.food = []
     }
 
-    getNumEntities(type) {
-        return this.numEntities[type];
+    getNumEntities(entityClass) {
+        return this.numEntities[entityClass];
     }
 
     spawn(group, agentClass, x, y) {
@@ -54,7 +54,8 @@ class Flock {
             }
             let r = this.agents[i].breed();
             if (r) {
-                this.spawn(this.agents, this.agents[i].type, this.agents[i].pos.x, this.agents[i].pos.y);
+                let agentClass = this.agents[i].constructor.name;
+                this.spawn(this.agents, agentClass, this.agents[i].pos.x, this.agents[i].pos.y);
             }
         }
     }
@@ -82,7 +83,8 @@ class Flock {
         let i = 0;
         while (i < group.length) {
             if (group[i].isDead()) {
-                this.numEntities[group[i].type] -= 1;
+                let entityClass = group[i].constructor.name;
+                this.numEntities[entityClass] -= 1;
                 group.splice(i, 1);
                 continue;
             }

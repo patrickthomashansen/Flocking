@@ -4,7 +4,7 @@ class Agent extends VectorSprite {
     SUPER_BOUNDARY_FORCE = 1;
     THRUST_FORCE = 0.1;
 
-    EAT_DELAY = 100;
+    EAT_DELAY = 500;
     MATE_DELAY = 1000;
 
     constructor(x, y) {
@@ -16,7 +16,7 @@ class Agent extends VectorSprite {
         this.desiredSeparation = 75;
         this.desiredBoundaryDist = 100;
         this.detectionRadius = 100;
-        this.collisionRadius = 10;
+        this.collisionRadius = 20;
         this.detectedAgents = {};
         this.dead = false;
         this.eatTimer = 0;
@@ -224,7 +224,7 @@ class Agent extends VectorSprite {
             this.mateTimer++;
             return;
         }
-        if (this.collidedAgents[agentType] && this.health > 0.75) {
+        if (this.collidedAgents[agentType] && this.health > 0.5) {
             this.mating = true;
             this.mateTimer = 0;
         }
