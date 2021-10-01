@@ -12,18 +12,19 @@ class Predator extends Agent {
     }
 
     interact() {
-        this.attemptEat(PREY);
-        this.attemptMate(PREDATOR);
-        this.age(0.001);
+        this.attemptEat(PREY, EAT_DELAY);
+        this.attemptMate(PREDATOR, PREDATOR_MATE_DELAY);
+        this.age(AGE_DAMAGE);
     }
 
     move(canvas) {
-        this.applyThrust();
-        this.applySeparation(PREDATOR, 200);
-        this.applyAlignment(PREDATOR, 0.025);
-        this.applyCohesion(PREDATOR, 0.005);
-        this.applyAttack(PREY, 0.5);
+        this.applyThrust(THRUST_FORCE);
+        this.applySeparation(PREDATOR, SEPARATION_FORCE);
+        this.applyAlignment(PREDATOR, ALIGNMENT_FORCE);
+        this.applyCohesion(PREDATOR, COHESION_FORCE);
+        this.applyAttack(PREY, PREDATOR_ATTACK_FORCE);
         this.applyBoundaries(canvas.width, canvas.height);
+        // this.updateTail();
         this.updatePos();
     }
 

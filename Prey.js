@@ -1,7 +1,5 @@
 class Prey extends Agent {
 
-    MATE_DELAY = 500;
-
     constructor(x, y) {
         super(x, y);
         this.color = [0, 0, 255];
@@ -12,19 +10,20 @@ class Prey extends Agent {
     }
 
     interact() {
-        this.attemptEat(FOOD);
-        this.attemptMate(PREY);
-        this.age(0.001);
+        this.attemptEat(FOOD, EAT_DELAY);
+        this.attemptMate(PREY, PREY_MATE_DELAY);
+        this.age(AGE_DAMAGE);
     }
 
     move(canvas) {
-        this.applyThrust();
-        this.applySeparation(PREY, 200);
-        this.applyAlignment(PREY, 0.025);
-        this.applyCohesion(PREY, 0.005);
-        this.applyFlee(PREDATOR, 0.005);
-        this.applyAttack(FOOD, 0.25);
+        this.applyThrust(THRUST_FORCE);
+        this.applySeparation(PREY, SEPARATION_FORCE);
+        this.applyAlignment(PREY, ALIGNMENT_FORCE);
+        this.applyCohesion(PREY, COHESION_FORCE);
+        this.applyFlee(PREDATOR, FLEE_FORCE);
+        this.applyAttack(FOOD, PREY_ATTACK_FORCE);
         this.applyBoundaries(canvas.width, canvas.height);
+        // this.updateTail();
         this.updatePos();
     }
 

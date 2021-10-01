@@ -1,51 +1,23 @@
 class VectorSprite {
-
-    MAX_PREV_POS = 25;
-    PREV_POS_DELAY = 5;
-
     constructor(x, y) {
         this.pos = new Vector(x, y);
 
         this.prevPos = [];
-        this.prevPosTimer = 0;
+        this.tailTimer = 0;
         
-        this.setColor([255, 255, 255]);
-        this.setAlpha(1);
-        this.setSize(10);
-        this.setAngle(0);
-        this.setDetectionRadius(100);
-        this.setDetectionAngle(Math.PI * 2 / 3);
+        this.color = [255, 255, 255];
+        this.alpha = 1;
+        this.size = 10;
+        this.angle = 0;
+        this.detectionRadius = 100;
+        this.detectionAngle = Math.PI * 2 / 3;
     }
 
-    setColor(color) {
-        this.color = color;
-    }
-
-    setAlpha(alpha) {
-        this.alpha = alpha;
-    }
-
-    setSize(size) {
-        this.size = size;
-    }
-
-    setAngle(angle) {
-        this.angle = angle;
-    }
-
-    setDetectionRadius(radius) {
-        this.detectionRadius = radius;
-    }
-
-    setDetectionAngle(angle) {
-        this.detectionAngle = angle;
-    }
-
-    updatePrevPos(pos) {
-        this.prevPosTimer++;
-        if (this.prevPosTimer >= this.PREV_POS_DELAY){
-            this.prevPosTimer = 0;
-            if (this.prevPos.length >= this.MAX_PREV_POS){
+    updateTail() {
+        this.tailTimer++;
+        if (this.tailTimer >= TAIL_DELAY){
+            this.tailTimer = 0;
+            if (this.prevPos.length >= this.MAX_TAIL_LENGTH){
                 this.prevPos.pop();
             }
             this.prevPos.unshift(Vector.copy(this.pos));
@@ -92,7 +64,7 @@ class VectorSprite {
             }
             ctx.beginPath();
             ctx.save();
-            let alpha = (this.MAX_PREV_POS - i) / this.MAX_PREV_POS;
+            let alpha = (this.MAX_TAIL_LENGTH - i) / this.MAX_TAIL_LENGTH;
             ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
             ctx.moveTo(fromPos.x, fromPos.y);
             ctx.lineTo(this.prevPos[i].x, this.prevPos[i].y);

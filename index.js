@@ -1,5 +1,24 @@
+MAX_TAIL_LENGTH = 25;
+TAIL_DELAY = 5;
 MAX_AGENT_POPULATION = 500;
 MAX_FOOD_POPULATION = 500;
+BOUNDARY_FORCE = 0.25;
+SUPER_BOUNDARY_FORCE = 1;
+THRUST_FORCE = 0.1;
+SEPARATION_FORCE = 200;
+ALIGNMENT_FORCE = 0.025;
+COHESION_FORCE = 0.005;
+PREDATOR_ATTACK_FORCE = 0.5;
+PREY_ATTACK_FORCE = 0.25;
+FLEE_FORCE = 0.005;
+EAT_DELAY = 500;
+PREDATOR_MATE_DELAY = 1000;
+PREY_MATE_DELAY = 500;
+AGE_DAMAGE = 0.001;
+
+PREDATOR = "Predator";
+PREY = "Prey";
+FOOD = "Food";
 
 var stats;
 var canvas;
@@ -7,10 +26,6 @@ var ctx;
 var flock;
 var fps;
 var lastFrame;
-
-var PREDATOR = "Predator";
-var PREY = "Prey";
-var FOOD = "Food";
 
 function init() {
     stats = document.getElementById('stats');
@@ -21,9 +36,8 @@ function init() {
 
     flock = new Flock();
     flock.initializeAgentPopulations({[PREDATOR]: 100, [PREY]: 400});
-    flock.initializeFoodPopulations({[FOOD]: 500});
-    flock.registerFoodSpawns({[FOOD]: 1});
-
+    flock.initializeFoodPopulations({[FOOD]: 100});
+    flock.registerFoodSpawns({[FOOD]: 0.5});
 }
 
 function draw() {
